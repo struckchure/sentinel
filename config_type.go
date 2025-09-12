@@ -7,11 +7,16 @@ type Config struct {
 }
 
 type Backend struct {
-	Patterns     []Method              `json:"patterns" yaml:"patterns"`
+	Patterns     []Pattern             `json:"patterns" yaml:"patterns"`
 	Methods      []Method              `json:"methods" yaml:"methods"`
 	LoadBalancer LoadBalancerAlgorithm `json:"load_balancer" yaml:"load_balancer"`
 	Services     []Service             `json:"services" yaml:"services"`
 	Plugins      []Plugin              `json:"plugins" yaml:"plugins"`
+}
+
+type Pattern struct {
+	From string `json:"from" yaml:"from"`
+	To   string `json:"to" yaml:"to"`
 }
 
 type Method string

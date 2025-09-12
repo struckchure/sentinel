@@ -14,7 +14,7 @@
         },
         "patterns": {
           "items": {
-            "type": "string"
+            "$ref": "#/$defs/Pattern"
           },
           "type": "array"
         },
@@ -47,6 +47,18 @@
         },
         "port": {
           "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "Pattern": {
+      "additionalProperties": false,
+      "properties": {
+        "from": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
         }
       },
       "type": "object"
