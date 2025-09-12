@@ -137,12 +137,6 @@ Contributions are what make the open-source community such an amazing place to l
 
 This project does not have a specified license. Please refer to the `LICENSE` file for more details.
 
-## 📬 Contact
-
-Your Name - [@struckchure](https://twitter.com/struckchure)
-
-Project Link: [https://github.com/struckchure/sentinel](https://github.com/struckchure/sentinel)
-
 <br/>
 <p align="center">
   <a href="https://www.npmjs.com/package/dokugen">
