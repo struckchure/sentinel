@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../sentinel.schema.json
+
+host: localhost
+port: 3000
+backends:
+  - load_balancer: round-robin
+    methods: ["*"]
+    patterns:
+      - /todo/
+      - /todo/*
+    plugins:
+      - name: rate-limiter
+        config:
+          limit: 20s
+          expires: 3m
+      - name: auth-n
+        config:
+          alg: RS256
+          jwk_url: string
+          jwt_secret: string
+          propagate_claims:
+            - from: sub
+              to: X-User
+    services:
+      - url: localhost:8010
+      - url: localhost:8020
+      - url: localhost:8030
