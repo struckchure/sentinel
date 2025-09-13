@@ -81,6 +81,9 @@ func (c *ConfigLoader) Load(path string, configType ConfigType) (*Config, error)
 func (c *ConfigLoader) Schema(save bool, indentation int, output string) error {
 	r := new(jsonschema.Reflector)
 	r.RequiredFromJSONSchemaTags = true
+	r.AllowAdditionalProperties = true
+	r.ExpandedStruct = true
+
 	schema := r.Reflect(&Config{})
 	schema.Version = "https://json-schema.org/draft-07/schema"
 	schema.ID = ""
