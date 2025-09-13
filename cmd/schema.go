@@ -1,10 +1,9 @@
 package main
 
 import (
-	"log"
+	"github.com/struckchure/sentinel"
 
 	"github.com/spf13/cobra"
-	"github.com/struckchure/sentinel"
 )
 
 var schemaCmd = &cobra.Command{
@@ -17,7 +16,7 @@ var schemaCmd = &cobra.Command{
 
 		config := sentinel.NewConfigLoader()
 		if err := config.Schema(save, indentation, output); err != nil {
-			log.Panic(err)
+			new(sentinel.Logger).Error(err.Error())
 		}
 	},
 }

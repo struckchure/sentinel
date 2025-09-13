@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"os"
 	"path/filepath"
 
@@ -27,7 +26,7 @@ var rootCmd = &cobra.Command{
 		_configType := filepath.Ext(_configFile)[1:]
 		_config, err := loader.Load(_configFile, sentinel.ConfigType(_configType))
 		if err != nil {
-			log.Panic(err)
+			new(sentinel.Logger).Error(err.Error())
 		}
 
 		config = _config

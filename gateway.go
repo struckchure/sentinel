@@ -24,7 +24,7 @@ func (g *Gateway) Run() error {
 	e.HideBanner = true
 
 	e.Pre(middleware.RemoveTrailingSlash())
-	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{Format: "method=${method}, uri=${uri}, status=${status}\n"}))
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{Format: "${method} ${uri} ${status}\n"}))
 
 	proxyTargets := []*middleware.ProxyTarget{}
 	for _, backend := range g.config.Backends {
@@ -61,9 +61,28 @@ func (g *Gateway) Run() error {
 			},
 		})
 
+		middlewares := []echo.MiddlewareFunc{}
+		for _, middleware := range backend.Middlewares {
+			middlewareFunc, ok := MiddlewareRegistry[middleware.Name]
+			if !ok {
+				logger.Warn("middleware (%s) not found in registry", middleware.Name)
+				continue
+			}
+
+			middlewares = append(middlewares, middlewareFunc(backend, middleware.Config))
+		}
+
 		for _, pattern := range backend.Patterns {
 			group := e.Group(pattern.From)
+
+			if len(backend.Methods) > 0 {
+				group.Use(AllowedMethodMiddleware(backend, nil))
+			}
+
+			group.Use(middlewares...)
 			group.Use(lb)
+
+			middlewares = []echo.MiddlewareFunc{}
 		}
 	}
 

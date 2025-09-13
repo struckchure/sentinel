@@ -11,7 +11,7 @@ type Backend struct {
 	Methods      []Method              `json:"methods" yaml:"methods"`
 	LoadBalancer LoadBalancerAlgorithm `json:"load_balancer" yaml:"load_balancer"`
 	Services     []Service             `json:"services" yaml:"services"`
-	Plugins      []Plugin              `json:"plugins" yaml:"plugins"`
+	Middlewares  []Middleware          `json:"middlewares" yaml:"middlewares"`
 }
 
 type Pattern struct {
@@ -48,7 +48,7 @@ type Service struct {
 	Weight int    `json:"weight" yaml:"weight"`
 }
 
-type Plugin struct {
+type Middleware struct {
 	Name   string         `json:"name" yaml:"name"`
 	Config map[string]any `json:"config" yaml:"config"`
 }

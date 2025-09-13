@@ -4,17 +4,17 @@ host: localhost
 port: 3000
 backends:
   - load_balancer: round-robin
-    methods: ["*"]
     patterns:
       - from: /todos
         to: /todos
       - from: /todos/*
         to: /todos/$1
-    plugins:
+    middlewares:
       - name: rate-limiter
         config:
-          limit: 20s
-          expires: 3m
+          limit: 10
+          burst: 0
+          expires: 30s
       - name: auth-n
         config:
           alg: RS256
@@ -28,25 +28,12 @@ backends:
       - url: http://localhost:8020
       - url: http://localhost:8030
   - load_balancer: random
-    methods: ["*"]
+    methods: ["OPTIONS", "GET", "POST"]
     patterns:
       - from: /todos-v2
         to: /todos
       - from: /todos-v2/*
         to: /todos/$1
-    plugins:
-      - name: rate-limiter
-        config:
-          limit: 20s
-          expires: 3m
-      - name: auth-n
-        config:
-          alg: RS256
-          jwk_url: string
-          jwt_secret: string
-          propagate_claims:
-            - from: sub
-              to: X-User
     services:
       - url: http://localhost:8010
       - url: http://localhost:8020
