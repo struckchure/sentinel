@@ -52,23 +52,26 @@ Sentinel is operated via its command-line interface and configured using a YAML 
 
 Create a `sentinel.yaml` file to define your gateway's behavior. The gateway routes requests based on URL patterns to a set of backend services, applying load balancing and plugins as configured.
 
-Here is an example configuration from `example/sentinel.yaml`:
+Here is an example configuration from `sentinel.yaml`:
 
 ```yaml
-# sentinel.yaml
+# yaml-language-server: $schema=sentinel.schema.json
+
 host: localhost
 port: 3000
 backends:
   - load_balancer: round-robin
-    methods: ["*"]
     patterns:
-      - /todo/
-      - /todo/*
-    plugins:
+      - from: /todos
+        to: /todos
+      - from: /todos/*
+        to: /todos/$1
+    middlewares:
       - name: rate-limiter
         config:
-          limit: 20s
-          expires: 3m
+          limit: 10
+          burst: 0
+          expires: 30s
       - name: auth-n
         config:
           alg: RS256
@@ -78,12 +81,20 @@ backends:
             - from: sub
               to: X-User
     services:
-      - url: localhost:8010
-        weight: 1
-      - url: localhost:8020
-        weight: 1
-      - url: localhost:8030
-        weight: 1
+      - url: http://localhost:8010
+      - url: http://localhost:8020
+      - url: http://localhost:8030
+  - load_balancer: random
+    methods: ["OPTIONS", "GET", "POST"]
+    patterns:
+      - from: /todos-v2
+        to: /todos
+      - from: /todos-v2/*
+        to: /todos/$1
+    services:
+      - url: http://localhost:8010
+      - url: http://localhost:8020
+      - url: http://localhost:8030
 ```
 
 ### 2. Running the Gateway
@@ -91,7 +102,7 @@ backends:
 Start the gateway using the `run` command, specifying your configuration file with the `-c` flag.
 
 ```bash
-./sentinel run -c example/sentinel.yaml
+./sentinel run
 ```
 
 The gateway will now listen for requests on `localhost:3000` and forward traffic matching the `/todo/*` pattern to the backend services `localhost:8010`, `localhost:8020`, and `localhost:8030` using a round-robin strategy.
