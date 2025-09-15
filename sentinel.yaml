@@ -18,7 +18,7 @@ backends:
       - name: auth-n
         config:
           alg: RS256
-          jwks_url: https://dev-l03no73x2xqqchuh.us.auth0.com/.well-known/jwks.json
+          jwks_url: https://example.com/.well-known/jwks.json
           jwt_secret: your-super-secret-key
           propagate_claims:
             - from: sub
