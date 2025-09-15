@@ -6,4 +6,5 @@ type MiddlewareFunc func(Backend, map[string]any) echo.MiddlewareFunc
 
 var MiddlewareRegistry = map[string]MiddlewareFunc{
 	"rate-limiter": RateLimiterMiddleware,
+	"auth-n":       AuthNJwtMiddleware,
 }

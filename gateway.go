@@ -81,8 +81,6 @@ func (g *Gateway) Run() error {
 
 			group.Use(middlewares...)
 			group.Use(lb)
-
-			middlewares = []echo.MiddlewareFunc{}
 		}
 	}
 

@@ -3,9 +3,13 @@ module github.com/struckchure/sentinel
 go 1.24.1
 
 require (
+	github.com/MicahParks/keyfunc/v3 v3.6.1
 	github.com/fatih/color v1.18.0
+	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/invopop/jsonschema v0.13.0
+	github.com/labstack/echo-jwt/v4 v4.3.1
 	github.com/labstack/echo/v4 v4.13.4
+	github.com/mitchellh/mapstructure v1.5.0
 	github.com/samber/lo v1.51.0
 	github.com/spf13/cobra v1.10.1
 	golang.org/x/time v0.11.0
@@ -13,6 +17,7 @@ require (
 )
 
 require (
+	github.com/MicahParks/jwkset v0.8.0 // indirect
 	github.com/bahlo/generic-list-go v0.2.0 // indirect
 	github.com/buger/jsonparser v1.1.1 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
