@@ -7,6 +7,7 @@ type Config struct {
 }
 
 type Backend struct {
+	Hostname     *string               `json:"hostname" yaml:"hostname"`
 	Patterns     []Pattern             `json:"patterns" yaml:"patterns"`
 	Methods      []Method              `json:"methods" yaml:"methods"`
 	LoadBalancer LoadBalancerAlgorithm `json:"load_balancer" yaml:"load_balancer"`

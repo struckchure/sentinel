@@ -64,18 +64,31 @@ func (c *ConfigLoader) LoadJson(path string) (*Config, error) {
 	if err := json.Unmarshal(data, &config); err != nil {
 		return nil, err
 	}
+
 	return &config, nil
 }
 
-func (c *ConfigLoader) Load(path string, configType ConfigType) (*Config, error) {
+func (c *ConfigLoader) Load(path string, configType ConfigType) (config *Config, err error) {
 	switch configType {
 	case ConfigTypeYaml:
-		return c.LoadYaml(path)
+		config, err = c.LoadYaml(path)
 	case ConfigTypeJson:
-		return c.LoadJson(path)
+		config, err = c.LoadJson(path)
+	default:
+		return nil, errors.New("config type not supported")
 	}
 
-	return nil, errors.New("config type not supported")
+	if err != nil {
+		return nil, err
+	}
+
+	for idx, backend := range config.Backends {
+		if backend.Hostname == nil {
+			config.Backends[idx].Hostname = &config.Host
+		}
+	}
+
+	return config, nil
 }
 
 func (c *ConfigLoader) Schema(save bool, indentation int, output string) error {

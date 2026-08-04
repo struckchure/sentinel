@@ -24,15 +24,15 @@ func (g *Gateway) Run() error {
 	e.HideBanner = true
 
 	e.Pre(middleware.RemoveTrailingSlash())
-	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{Format: "${method} ${uri} ${status}\n"}))
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{Format: "[${host}] ${method} ${uri} ${status}\n"}))
 
+	rootLb := NewRootLB()
 	proxyTargets := []*middleware.ProxyTarget{}
+
 	for _, backend := range g.config.Backends {
 		for _, service := range backend.Services {
-			proxyTargets = append(
-				proxyTargets,
-				&middleware.ProxyTarget{URL: lo.Must(url.Parse(service.Url))},
-			)
+			target := &middleware.ProxyTarget{URL: lo.Must(url.Parse(service.Url))}
+			proxyTargets = append(proxyTargets, target)
 		}
 
 		rewrite := map[string]string{}
@@ -52,9 +52,15 @@ func (g *Gateway) Run() error {
 			return errors.New("algorithm not implemented")
 		}
 
+		if backend.Hostname != nil {
+			rootLb.AddLB(lbAlgorithm, []string{*backend.Hostname})
+		} else {
+			logger.Warn("hostname is missing or invalid")
+		}
+
 		lb := middleware.ProxyWithConfig(middleware.ProxyConfig{
 			Rewrite:  rewrite,
-			Balancer: lbAlgorithm,
+			Balancer: middleware.ProxyBalancer(rootLb),
 			ModifyResponse: func(r *http.Response) error {
 				r.Header.Set("Server", "Sentinel")
 				return nil
@@ -80,8 +86,9 @@ func (g *Gateway) Run() error {
 			}
 
 			group.Use(middlewares...)
-			group.Use(lb)
 		}
+
+		e.Use(lb)
 	}
 
 	e.Logger.Fatal(e.Start(fmt.Sprintf("%s:%d", g.config.Host, g.config.Port)))

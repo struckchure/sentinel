@@ -3,7 +3,8 @@
 host: localhost
 port: 3000
 backends:
-  - load_balancer: round-robin
+  - hostname: example.localhost
+    load_balancer: round-robin
     patterns:
       - from: /todos
         to: /todos

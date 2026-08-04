@@ -2,6 +2,9 @@
   "$defs": {
     "Backend": {
       "properties": {
+        "hostname": {
+          "type": "string"
+        },
         "load_balancer": {
           "type": "string"
         },
